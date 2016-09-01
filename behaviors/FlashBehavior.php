@@ -1,9 +1,12 @@
 <?php
 
 /**
- * @copyright (c) 2015, Human Device Sp. z o.o.
- * @author Paweł Brzozowski <pb@human-device.com>
+ * ###############################################################################
+ * @author Pawel Brzozowski <pb@human-device.com>
+ * @copyright Copyright (c) 2016, Human Device Sp. z o.o. https://human-device.com
+ * ###############################################################################
  */
+ 
 namespace behaviors;
 
 use Yii;
