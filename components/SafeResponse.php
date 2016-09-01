@@ -103,6 +103,28 @@ class SafeResponse extends Response
         'script-src' => "'self'",
         'style-src' => "'self'"
     ];
+    /**
+     * @var array HPKP pins.
+     * Every item should be Base64 encoded Subject Public Key Information (SPKI) fingerprint.
+     * Set to empty array, false or null to switch off.
+     * https://www.owasp.org/index.php/OWASP_Secure_Headers_Project#Public_Key_Pinning_Extension_for_HTTP_.28HPKP.29
+     */
+    public $hpkpPins = [];
+    /**
+     * @var int Number of seconds browser should remember that this site is only to be accessed using one of the pinned keys.
+     * Works only with set $hpkpPins.
+     */
+    public $hpkpMaxAge = 10000;
+    /**
+     * @var bool Whether to apply HPKP rule to all of the site's subdomains as well.
+     */
+    public $hpkpIncludeSubdomains = true;
+    /**
+     * @var string URL where validation failures are reported to.
+     * Set empty to ommit.
+     */
+    public $hpkpReportUri = '';
+
 
     /**
      * @inheritdoc
@@ -127,6 +149,7 @@ class SafeResponse extends Response
         $this->addContentTypeOptions($headers);
         $this->addXssProtection($headers);
         $this->addFrameOptions($headers);
+        $this->addPublicKeyPins($headers);
     }
     
     /**
@@ -209,6 +232,28 @@ class SafeResponse extends Response
     {
         if ($this->contentTypeLevel) {
             $headers->set('X-Content-Type-Options', "nosniff");
+        }
+    }
+    
+    /**
+     * Sets HPKP header.
+     * @param HeaderCollection $headers
+     */
+    public function addPublicKeyPins(HeaderCollection $headers)
+    {
+        if ($this->hpkpPins && is_array($this->hpkpPins)) {
+            $values = [];
+            foreach ($this->hpkpPins as $pin) {
+                $values[] = "pin-sha256=\"" . $pin . "\"";
+            }
+            if (!empty($this->hpkpReportUri)) {
+                $values[] = "report-uri=\"" . $this->hpkpReportUri . "\"";
+            }
+            $values[] = "max-age=" . $this->hpkpMaxAge;
+            if ($this->hpkpIncludeSubdomains) {
+                $values[] = "includeSubDomains";
+            }
+            $headers->set('Public-Key-Pins', implode("; ", $values));
         }
     }
 }
