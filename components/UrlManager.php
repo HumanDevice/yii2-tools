@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * ###############################################################################
+ * @author Pawel Brzozowski <pb@human-device.com>
+ * @copyright Copyright (c) 2016, Human Device Sp. z o.o. https://human-device.com
+ * ###############################################################################
+ */
+ 
 namespace common\components;
 
 use Yii;
