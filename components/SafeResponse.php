@@ -40,6 +40,13 @@ use yii\web\Response;
  *              'secure' => true,
  *          ],
  *      ],
+ *      'session' => [
+ *          // configuration here
+ *          'cookieParams' => [
+ *              'httpOnly' => true,
+ *              'secure' => true,
+ *          ],
+ *      ],
  *  ]
  */
 class SafeResponse extends Response
