@@ -1,62 +1,48 @@
 <?php
 
-namespace app\controllers;
+namespace frontend\controllers;
 
-use Yii;
-use yii\web\Controller;
-use yii\web\Response;
+use common\components\web\Controller;
+use common\components\web\JsAction;
+use common\components\web\View;
 
 /**
- * Controller renders JS via session sent from View component.
+ * Controller renders JS via storage sent from View component.
  */
 class JsController extends Controller
 {
-    public function beforeAction($action)
+    /**
+     * @inheritdoc
+     */
+    public function actions()
     {
-        Yii::$app->response->format = Response::FORMAT_RAW;
-        Yii::$app->response->headers->set('Content-Type', 'application/javascript; charset=UTF-8');
-        return parent::beforeAction($action);
-    }
-    
-    public function actionReady()
-    {
-        $src = Yii::$app->session->get('js-ready', []);
-        $js = "jQuery(document).ready(function () {\n" . implode("\n", $src) . "\n});";
-        return $js;
-    }
-    
-    public function actionLoad()
-    {
-        $src = Yii::$app->session->get('js-load', []);
-        $js = "jQuery(window).load(function () {\n" . implode("\n", $src) . "\n});";
-        return $js;
-    }
-    
-    public function actionEnd()
-    {
-        $src = Yii::$app->session->get('js-end', []);
-        $js = implode("\n", $src);
-        return $js;
-    }
-    
-    public function actionBegin()
-    {
-        $src = Yii::$app->session->get('js-begin', []);
-        $js = implode("\n", $src);
-        return $js;
-    }
-    
-    public function actionAjax()
-    {
-        $src = Yii::$app->session->get('js-ajax', []);
-        $js = implode("\n", $src);
-        return $js;
-    }
-    
-    public function actionHead()
-    {
-        $src = Yii::$app->session->get('js-head', []);
-        $js = implode("\n", $src);
-        return $js;
+        return [
+            'ready' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_READY,
+                'template' => "jQuery(document).ready(function () {\n{js}\n});"
+            ],
+            'load' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_LOAD,
+                'template' => "jQuery(window).load(function () {\n{js}\n});"
+            ],
+            'ajax' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_AJAX
+            ],
+            'begin' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_BEGIN
+            ],
+            'end' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_END
+            ],
+            'head' => [
+                'class' => JsAction::className(),
+                'storageKey' => View::STORAGE_JS_HEAD
+            ],
+        ];
     }
 }
