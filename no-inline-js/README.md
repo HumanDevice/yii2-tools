@@ -10,5 +10,16 @@ Now `SafeResponse` can be used with CSP set to `*-src: 'self'`.
         'components' => [
             // ...
             'view' => 'common\components\web\View',
+            'urlManager' => [
+                // ...
+                'rules' => [
+                    // ...
+                    [
+                        'pattern' => 'js/<action>',
+                        'route' => 'js/<action>',
+                        'suffix' => '.js',
+                    ],
+                ]
+            ]
         ],
     ];
