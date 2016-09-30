@@ -2,17 +2,37 @@
 
 namespace common\components\web;
 
-use Yii;
+use ArrayAccess;
+use yii\di\Instance;
 use yii\helpers\Html;
 use yii\web\View as YiiView;
 
 /**
  * View component rendering inline JS in separate file.
- *
- * @author Bizley
  */
 class View extends YiiView
 {
+    const STORAGE_JS_HEAD = 'JSBlockHead';
+    const STORAGE_JS_BEGIN = 'JSBlockBegin';
+    const STORAGE_JS_END = 'JSBlockEnd';
+    const STORAGE_JS_READY = 'JSBlockReady';
+    const STORAGE_JS_LOAD = 'JSBlockLoad';
+    const STORAGE_JS_AJAX = 'JSBlockAjax';
+    
+    /**
+     * @var string|array|ArrayAccess storage component
+     */
+    public $storage = 'session';
+    
+    /**
+     * Ensures storage component is set.
+     */
+    public function init()
+    {
+        parent::init();
+        $this->storage = Instance::ensure($this->storage, '\ArrayAccess');
+    }
+    
     /**
      * Renders the content to be inserted in the head section.
      * The content is rendered using the registered meta tags, link tags, CSS/JS code blocks and files.
@@ -38,7 +58,7 @@ class View extends YiiView
             $lines[] = implode("\n", $this->jsFiles[self::POS_HEAD]);
         }
         if (!empty($this->js[self::POS_HEAD])) {
-            Yii::$app->session->set('js-head', $this->js[self::POS_HEAD]);
+            $this->storage->offsetSet(self::STORAGE_JS_HEAD, $this->js[self::POS_HEAD]);
             $lines[] = Html::jsFile(['js/head']);
         }
 
@@ -57,7 +77,7 @@ class View extends YiiView
             $lines[] = implode("\n", $this->jsFiles[self::POS_BEGIN]);
         }
         if (!empty($this->js[self::POS_BEGIN])) {
-            Yii::$app->session->set('js-begin', $this->js[self::POS_BEGIN]);
+            $this->storage->offsetSet(self::STORAGE_JS_BEGIN, $this->js[self::POS_BEGIN]);
             $lines[] = Html::jsFile(['js/begin']);
         }
 
@@ -92,20 +112,20 @@ class View extends YiiView
                 $scripts[] = implode("\n", $this->js[self::POS_LOAD]);
             }
             if (!empty($scripts)) {
-                Yii::$app->session->set('js-ajax', $scripts);
+                $this->storage->offsetSet(self::STORAGE_JS_AJAX, $scripts);
                 $lines[] = Html::jsFile(['js/ajax']);
             }
         } else {
             if (!empty($this->js[self::POS_END])) {
-                Yii::$app->session->set('js-end', $this->js[self::POS_END]);
+                $this->storage->offsetSet(self::STORAGE_JS_END, $this->js[self::POS_END]);
                 $lines[] = Html::jsFile(['js/end']);
             }
             if (!empty($this->js[self::POS_READY])) {
-                Yii::$app->session->set('js-ready', $this->js[self::POS_READY]);
+                $this->storage->offsetSet(self::STORAGE_JS_READY, $this->js[self::POS_READY]);
                 $lines[] = Html::jsFile(['js/ready']);
             }
             if (!empty($this->js[self::POS_LOAD])) {
-                Yii::$app->session->set('js-load', $this->js[self::POS_LOAD]);
+                $this->storage->offsetSet(self::STORAGE_JS_LOAD, $this->js[self::POS_LOAD]);
                 $lines[] = Html::jsFile(['js/load']);
             }
         }
