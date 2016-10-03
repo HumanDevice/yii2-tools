@@ -15,7 +15,7 @@ Now `SafeResponse` can be used with CSP set to `*-src: 'self'`.
                 'rules' => [
                     // ...
                     [
-                        'pattern' => 'js/<action>',
+                        'pattern' => 'js/<action>/<hash>',
                         'route' => 'js/<action>',
                         'suffix' => '.js',
                     ],
