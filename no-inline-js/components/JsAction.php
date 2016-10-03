@@ -38,9 +38,10 @@ class JsAction extends Action
     
     /**
      * Renders output
+     * @param string $hash
      * @return string
      */
-    public function run()
+    public function run($hash)
     {
         Yii::$app->response->format = Response::FORMAT_RAW;
         Yii::$app->response->headers->set('Content-Type', 'application/javascript; charset=UTF-8');
